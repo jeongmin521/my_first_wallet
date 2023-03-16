@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My First Wallet</title>
+
+    <!-- Web3 -->
+    <script type="text/javascript" src="./scripts/web3.min.js"></script>
+
+    <!-- QrCode -->
+    <script type="text/javascript" src="./scripts/qrcode.js"></script>
+
+    <!-- Bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD"
+      crossorigin="anonymous"
+    />
+
+    <!-- jQuery -->
+    <script
+      src="https://code.jquery.com/jquery-3.6.4.slim.min.js"
+      integrity="sha256-a2yjHM4jnF9f54xUQakjZGaqYs/V1CYvWpoqZzC2/Bw="
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      $(document).ready(function () {
+        console.log("log jquery loading completed");
+
+        let web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:7545");
+
+        // 나의 계좌 목록을 가져와서 화면에 보여줌
+        web3.eth.getAccounts().then((accounts) => {
+          console.log("이더리움 Accounts", accounts);
+          const accountsElems = accounts.map(
+            (_account, index) => "<div>" + index + ". " + _account + "</div>"
+          );
+          $("#accountList").html(accountsElems);
+        });
+
+        const makeQrCode = (newAddress) => {
+          const qrcode = new QRCode(document.getElementById("qrcode"), {
+            width: 250,
+            height: 250,
+          });
+          qrcode.makeCode(newAddress);
+        };
+
+        // ----------------------------------------------
+        $("#btnNewAccount").click(function () {
+          alert("계좌생성");
+          const account = web3.eth.accounts.create();
+          console.log("생성된 계좌", account);
+          $("#newAddress").val(account.address);
+          makeQrCode(account.address);
+        });
+
+        $("#btnCheckBalance").click(function () {
+          alert("잔액확인");
+        });
+
+        $("#btnSendEther").click(function () {
+          alert("송금하기");
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <header class="container">
+      <h2>이더리움 전자지갑</h2>
+      <div class="p-2">
+        <button id="btnNewAccount">계좌생성</button>
+        <button id="btnCheckBalance">잔액확인</button>
+        <button id="btnSendEther">송금하기</button>
+      </div>
+    </header>
+    <section class="container">
+      <div class="py-3">
+        <div class="h5">나의 계좌목록</div>
+        <div class="row border" id="accountList">아무것도 없음</div>
+      </div>
+      <div class="row py-3">
+        <div class="col-4">
+          <span class="h5">생성된 계좌(new address)</span>
+        </div>
+        <div class="col">
+          <input id="newAddress" class="w-100" value="" />
+        </div>
+      </div>
+      <div class="row py-3">
+        <div class="col-4"><span class="h5">송신처(from address)</span></div>
+        <div class="col">
+          <input id="fromAddress" class="w-100" value="" />
+        </div>
+      </div>
+      <div class="row py-3">
+        <div class="col-4"><span class="h5">수신처(to address)</span></div>
+        <div class="col"><input id="toAddress" class="w-100" value="" /></div>
+      </div>
+      <div class="row py-3">
+        <div class="col-4"><span class="h5">보낼 코인(ether)</span></div>
+        <div class="col"><input id="sendCoin" placeholder="" value="1" /></div>
+      </div>
+      <div class="row py-3">
+        <div class="col-4">
+          <span class="h5">비밀번호(account private key)</span>
+        </div>
+        <div class="col">
+          <input
+            class="w-100"
+            type="password"
+            id="yourpw"
+            value="0x4dbbe8bf947a16456cf4e8f9736d5be3a2967e1380c69b5051e822c6069344e1"
+          />
+        </div>
+      </div>
+    </section>
+    <div class="container py-3">
+      <div><h4>계좌 QRCODE</h4></div>
+      <div id="qrcode" style="width: 250px; height: 250px" class="border"></div>
+    </div>
+    <div class="container">
+      <div><h4>Response Message</h4></div>
+      <div id="message" class="border">아무런 메세지가 없음</div>
+    </div>
+  </body>
+</html>
